@@ -14,6 +14,7 @@ import Main from "electron/main";
 import type { MainWindow } from "../api/apis/WindowApi";
 import { dialog } from "electron";
 import { UUID } from "../../../shared/utils/UniqueEntity";
+import { join } from "path";
 
 export type PluginSignature = string;
 export type NodeSignature = string;
@@ -151,6 +152,10 @@ class CommandPluginContext extends PluginContext {
   // public get getMainWindow() {
   //   return this.mainWindow;
   // }
+
+  public get image() {
+    return join(__dirname, "..", "..", "..", "..", "assets");
+  }
 
   public setDescription(description: string) {
     this.description = description;

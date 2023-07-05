@@ -65,6 +65,27 @@ const commands = {
         })
 
         return context.create();
+    },
+    "increaseBrightness": (context) => {
+
+        context.setDescription("Increase the brightness of the image");
+
+        context.setIcon("testing/image.jpg");
+
+        context.setDisplayName("Increase Brightness");
+
+        context.addCommand(async () => {
+            const sharp = require("sharp");
+
+            try {
+                console.log(context.image);
+                await sharp(context.image + "/image.png").flip().toFile(context.image + "/output.png");
+            } catch (error) {
+                console.log(`An error occurred during processing: ${error}`);
+            }
+        });
+
+        return context.create();
     }
 }
 
