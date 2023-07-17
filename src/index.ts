@@ -2,6 +2,7 @@ import { app, BrowserWindow, Notification, protocol, Menu, MenuItem, dialog } fr
 import { join } from "path";
 import { parse } from "url";
 import { autoUpdater } from "electron-updater";
+import { BlixAuth } from "./electron/lib/auth/Auth";
 
 import logger from "./electron/utils/logger";
 import settings from "./electron/utils/settings";
@@ -51,6 +52,10 @@ app.on("ready", async () => {
     const url = request.url.slice("blix-image://".length);
     callback({ path: join(__dirname, "..", "..", url) });
   });
+
+  // const auth = new BlixAuth();
+  // auth.createUser("test123@gmail.com", "test123");
+  // auth.login("test123@gmail.com", "test123");
 
   // const coreGraphInterpreter = new CoreGraphInterpreter();
   // coreGraphInterpreter.run();
