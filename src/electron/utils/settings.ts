@@ -1,11 +1,13 @@
 import ElectronStore from "electron-store";
 import { safeStorage } from "electron";
+import type { recentProject } from "../lib/projects/ProjectCommands";
 
 interface Settings {
   check: boolean;
   secrets: {
     OPENAI_API_KEY: string;
   };
+  recentProjects: recentProject[];
 }
 
 type DotUnionKeys<T, Prefix extends string = ""> = T extends object
@@ -23,12 +25,13 @@ type SettingKey = DotUnionKeys<Settings>;
 type Secret = keyof Settings["secrets"];
 
 // TODO: Perhaps add a schema for validation
-const settings = new ElectronStore<Settings>({
+export const settings = new ElectronStore<Settings>({
   defaults: {
     check: false,
     secrets: {
       OPENAI_API_KEY: "",
     },
+    recentProjects: [],
   },
 });
 

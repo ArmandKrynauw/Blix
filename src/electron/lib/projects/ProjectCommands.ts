@@ -9,13 +9,12 @@ import {
 import logger from "../../utils/logger";
 import { readFile, writeFile } from "fs/promises";
 import type { ProjectFile } from "./CoreProject";
-import type {
-  Command,
-  CommandContext,
-} from "../../lib/registries/CommandRegistry";
+import type { Command, CommandContext } from "../../lib/registries/CommandRegistry";
 import type { UUID } from "../../../shared/utils/UniqueEntity";
 import type { LayoutPanel } from "../../../shared/types";
 import { CoreGraphImporter } from "../../lib/core-graph/CoreGraphImporter";
+import { open } from "fs/promises";
+import { settings } from "../../utils/settings";
 
 type SaveProjectArgs = {
   projectId: UUID;
@@ -143,7 +142,7 @@ export async function saveProject(
       logger.error(err);
     }
   }
-
+  updateRecentProjectsList(project.location as string);
   return { success: true, message: "Project saved successfully" };
 }
 
@@ -209,5 +208,43 @@ export async function openProject(ctx: CommandContext) {
       id: projectId,
       layout: projectFile.layout,
     });
+    updateRecentProjectsList(path);
+  }
+}
+
+export interface recentProject {
+  path: string;
+}
+
+// TODO: Implement some sort of limit to how long the history of recent projects is.
+export async function updateRecentProjectsList(projectPath: string) {
+  const currentProjects: recentProject[] = settings.get("recentProjects");
+  let validProjects: recentProject[] = [];
+
+  const results = await Promise.all(
+    currentProjects.map(async (project) => await validateProjectPath(project.path))
+  );
+  for (let i = 0; i < currentProjects.length; i++) {
+    validProjects = results[i] ? [...validProjects, currentProjects[i]] : validProjects;
+  }
+
+  validProjects = validProjects.filter((project) => project.path !== projectPath);
+  validProjects.unshift({ path: projectPath });
+  settings.set("recentProjects", validProjects);
+  logger.info(settings.get("recentProjects"));
+}
+
+/**
+ * This function will check if the path specified has the ability to be read
+ *
+ * @param path Path to be checked
+ * @returns A boolean response
+ */
+export async function validateProjectPath(path: string): Promise<boolean> {
+  try {
+    await (await open(path, "r")).close();
+    return true;
+  } catch (e) {
+    return false;
   }
 }
