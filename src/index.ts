@@ -13,6 +13,7 @@ import { MainWindow, bindMainWindowApis } from "./electron/lib/api/apis/WindowAp
 import { platform } from "os";
 
 const isProd = process.env.NODE_ENV === "production" || app.isPackaged;
+const isTest = process.env.NODE_ENV === "test";
 // const isProd = true;
 
 if (app.isPackaged) {
@@ -98,23 +99,28 @@ async function createMainWindow() {
     // show: false,
   }) as MainWindow;
 
-  const url =
-    // process.env.NODE_ENV === "production"
-    // isProd
-    //   ? // in production, use the statically build version of our application
-    //     `file://${join(__dirname, "..", "public", "index.html")}`
-    //   : // in dev, target the host and port of the local rollup web server
-    //     "http://localhost:5500";
-    isProd
-      ? // in production, use the statically build version of our application
-        `file://${join(
-          __dirname,
-          // `${platform().toString() === "darwin" ? "../" : ""}public`,V
-          "public",
-          "index.html"
-        )}`
-      : // in dev, target the host and port of the local rollup web server
-        "http://localhost:5500";
+  let url;
+  if (isTest) {
+    url = `file://${join(__dirname, "..", "public", "index.html")}`;
+  } else {
+    url =
+      // process.env.NODE_ENV === "production"
+      // isProd
+      //   ? // in production, use the statically build version of our application
+      //     `file://${join(__dirname, "..", "public", "index.html")}`
+      //   : // in dev, target the host and port of the local rollup web server
+      //     "http://localhost:5500";
+      isProd
+        ? // in production, use the statically build version of our application
+          `file://${join(
+            __dirname,
+            // `${platform().toString() === "darwin" ? "../" : ""}public`,V
+            "public",
+            "index.html"
+          )}`
+        : // in dev, target the host and port of the local rollup web server
+          "http://localhost:5500";
+  }
 
   try {
     await mainWindow.loadURL(url);

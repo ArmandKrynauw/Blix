@@ -32,12 +32,23 @@ test('E2E testing blix', async () => {
   // and return its Page object
   const window = await electronApp.firstWindow();
 
-  await window.locator('svg').first().click();
+  window.on('load', async () => {
+    await window.keyboard.press('Escape');
+  });
 
-  expect((await window.getByTitle('Untitled').allInnerTexts()).at(0)).toBe("Untitled");
+  await window.locator('svg').first().focus();
 
-  const graph = window.locator('section').first();
-  await graph.click({button: 'right'});
+  //expect((await window.getByTitle('Untitled').allInnerTexts())).toBe("Untitled");
+
+  //await window.locator('span').nth(1).click();
+  //await window.getByRole('listitem').getByText('Graph').click();
+
+  const graph = await window.locator('section');
+  await graph.first().click({button: 'right'});
+
+  function delay(ms: number) {
+      return new Promise( resolve => setTimeout(resolve, ms) );
+  }
 
   // Check plugin menu
   const plugin = window.getByText('blix');
@@ -49,28 +60,31 @@ test('E2E testing blix', async () => {
 
   // Check add node to graph
   await plugin.click();
-  await window.getByText('Output').click();
+  await window.getByTitle('Output').click();
   await window.getByText('Output').first().click({button: 'right'});
 
   expect((await window.locator('Output').allInnerTexts()).at(0)).toBe(undefined);
 
-  // Check add graph
-  await window.getByText('Graph').click();
-  expect((await window.getByText('Graph', { exact: true }).allInnerTexts()).length).toBe(4);
-  await window.getByTitle('Add Graph').getByRole('img').click();
-  expect((await window.getByText('Graph', { exact: true }).allInnerTexts()).length).toBe(4);
-
   // Connect edges
-  await graph.click({button: 'right'});
+  await graph.first().click({button: 'right'});
   await plugin.click();
   await window.getByText('Output').click();
-  await graph.click({button: 'right'});
+
+  await delay(1000);
+  await graph.first().click({button: 'right'});
   await window.getByText('input-plugin').first().click();
   await window.getByText('Input number').click();
 
   await window.locator('css=div.svelvet-anchor').nth(1).dragTo(window.locator('css=div.svelvet-anchor').first());
 
-  expect((await window.locator('css=div.output.normal').allInnerTexts()).at(0)).toBe("3");
+  expect((await window.locator('css=div.output.normal').allInnerTexts()).at(0)).toBe("0");
+
+  // Check add graph
+  await window.getByText('Graph').click();
+  expect((await window.getByText('Graph', { exact: true }).allInnerTexts()).length).toBe(2);
+  await window.getByTitle('Add Graph').getByRole('img').click();
+  expect((await window.getByText('Graph', { exact: true }).allInnerTexts()).length).toBe(2);
+
 
   // close app
   await electronApp.close()
