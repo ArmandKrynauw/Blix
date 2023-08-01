@@ -1,8 +1,5 @@
 import { _electron as electron } from "playwright";
 import { test, expect } from "@playwright/test";
-import { join } from "path";
-import { waitForDebugger } from "inspector";
-import exp from "constants";
 
 test('E2E testing blix', async () => {
 
@@ -12,7 +9,7 @@ test('E2E testing blix', async () => {
     // the result of the require('electron') in the main app script.
     return app.isPackaged
   })
-  electronApp.on('window', (page) => {
+  electronApp.on('window', async (page) => {
     const filename = page.url()?.split('/').pop()
     console.log(`Window opened: ${filename}`)
 
@@ -24,7 +21,7 @@ test('E2E testing blix', async () => {
     page.on('console', (msg) => {
       console.log(msg.text())
     })
-  })
+  });
 
   // expect(isPackaged).toBe(false);
 
@@ -65,6 +62,7 @@ test('E2E testing blix', async () => {
   await plugin.click();
   await window.getByText('Output').click();
   await graph.click({button: 'right'});
+  await expect(window.getByText('input-plugin')).toBeVisible();
   await window.getByText('input-plugin').first().click();
   await window.getByText('Input number').click();
 
