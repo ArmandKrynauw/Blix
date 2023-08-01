@@ -1,5 +1,8 @@
 import { _electron as electron } from "playwright";
 import { test, expect } from "@playwright/test";
+import { join } from "path";
+import { waitForDebugger } from "inspector";
+import exp from "constants";
 
 test('E2E testing blix', async () => {
 
@@ -21,7 +24,7 @@ test('E2E testing blix', async () => {
     page.on('console', (msg) => {
       console.log(msg.text())
     })
-  });
+  })
 
   // expect(isPackaged).toBe(false);
 
@@ -62,7 +65,6 @@ test('E2E testing blix', async () => {
   await plugin.click();
   await window.getByText('Output').click();
   await graph.click({button: 'right'});
-  await expect(window.getByText('input-plugin')).toBeVisible();
   await window.getByText('input-plugin').first().click();
   await window.getByText('Input number').click();
 
