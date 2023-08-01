@@ -12,7 +12,7 @@ test('E2E testing blix', async () => {
     // the result of the require('electron') in the main app script.
     return app.isPackaged
   })
-  electronApp.on('window', async (page) => {
+  electronApp.on('window', (page) => {
     const filename = page.url()?.split('/').pop()
     console.log(`Window opened: ${filename}`)
 
