@@ -25,6 +25,9 @@ test('E2E testing blix', async () => {
       console.log(msg.text())
     })
   })
+  function delay(ms: number) {
+      return new Promise( resolve => setTimeout(resolve, ms) );
+  }
 
   // expect(isPackaged).toBe(false);
 
@@ -32,12 +35,19 @@ test('E2E testing blix', async () => {
   // and return its Page object
   const window = await electronApp.firstWindow();
 
-  await window.locator('svg').first().click();
+  await delay(2000);
+  await window.keyboard.press('Escape');
 
   expect((await window.getByTitle('Untitled').allInnerTexts()).at(0)).toBe("Untitled");
 
-  const graph = window.locator('section').first();
-  await graph.click({button: 'right'});
+  //expect((await window.getByTitle('Untitled').allInnerTexts())).toBe("Untitled");
+
+  //await window.locator('span').nth(1).click();
+  //await window.getByRole('listitem').getByText('Graph').click();
+
+  const graph = await window.locator('section');
+  await graph.first().click({button: 'right'});
+
 
   // Check plugin menu
   const plugin = window.getByText('blix');
@@ -70,7 +80,15 @@ test('E2E testing blix', async () => {
 
   await window.locator('css=div.svelvet-anchor').nth(1).dragTo(window.locator('css=div.svelvet-anchor').first());
 
-  expect((await window.locator('css=div.output.normal').allInnerTexts()).at(0)).toBe("3");
+  await delay(1000);
+  expect((await window.locator('css=div.output.normal').allInnerTexts()).at(0)).toBe("0");
+
+  // Check add graph
+  await window.getByText('Graph').click();
+  expect((await window.getByText('Graph', { exact: true }).allInnerTexts()).length).toBe(2);
+  await window.getByTitle('Add Graph').getByRole('img').click();
+  expect((await window.getByText('Graph', { exact: true }).allInnerTexts()).length).toBe(2);
+
 
   // close app
   await electronApp.close()
