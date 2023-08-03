@@ -9,6 +9,7 @@ import {
 import type { EdgeToJSON, GraphToJSON, NodeToJSON } from "./CoreGraphExporter";
 import { type NodeSignature } from "../../../shared/ui/ToolboxTypes";
 import type { INodeUIInputs, QueryResponse, UIValue } from "../../../shared/types";
+import { type GraphMetadata } from "../../../shared/ui/UIGraph";
 import { type MediaOutputId } from "../../../shared/types/media";
 
 // =========================================
@@ -45,6 +46,7 @@ export class CoreGraph extends UniqueEntity {
   // E.g. we can do (source anchor) ---[edgeSrc]--> (destination anchors) ---[edgeDest]--> (Edges)
   //      to get all the edges that flow from a source anchor
   private outputNodes: { [key: UUID]: MediaOutputId };
+  private metadata: GraphMetadata;
 
   // Maps a node UUID to a list of UI inputs
   private uiInputs: { [key: UUID]: CoreNodeUIInputs };
@@ -59,6 +61,9 @@ export class CoreGraph extends UniqueEntity {
     this.edgeSrc = {};
     this.outputNodes = {};
     this.uiInputs = {};
+    this.metadata = {
+      displayName: "Graph",
+    };
     // this.nodeList = [];
   }
 
@@ -141,6 +146,10 @@ export class CoreGraph extends UniqueEntity {
 
   public get getAllUIInputs() {
     return this.uiInputs;
+  }
+
+  public get getMetadata() {
+    return { ...this.metadata };
   }
 
   public getUIInputs(nodeUUID: UUID): { [key: string]: UIValue } | null {
@@ -402,8 +411,46 @@ export class CoreGraph extends UniqueEntity {
     return { status: "success" };
   }
 
-  // public exportJSON(): GraphToJSON {
-  //   return { nodes: this.nodesToJSONObject(), edges: this.edgesToJSONObject() };
+  public updateMetadata(updatedMetadata: Partial<GraphMetadata>) {
+    if (!updatedMetadata) {
+      return {
+        status: "error",
+        message: "No metadata provided",
+      } satisfies QueryResponse;
+    }
+
+    const { displayName } = updatedMetadata;
+
+    const newMetadata: GraphMetadata = {
+      displayName: displayName ? displayName : this.metadata.displayName,
+    };
+
+    this.metadata = newMetadata;
+
+    return {
+      status: "success",
+      message: "Metadata updated",
+    } satisfies QueryResponse;
+  }
+
+  private copy() {
+    // TODO
+  }
+
+  // public printGraph() {
+  //   for (const edge in this.edgeDest) {
+  //     if (!this.edgeDest.hasOwnProperty(edge)) continue;
+  //     logger.info("Edge (same as anchorTo): " + edge);
+  //     logger.info("Node From: " + this.anchors[this.edgeDest[edge].getAnchorFrom].parent.uuid);
+  //     logger.info("Node To: " + this.anchors[this.edgeDest[edge].getAnchorTo].parent.uuid);
+  //     logger.info("Anchor from -> Anchor to:");
+  //     logger.info(
+  //       this.anchors[this.edgeDest[edge].getAnchorFrom].getParent.getName +
+  //         " -> " +
+  //         this.anchors[this.edgeDest[edge].getAnchorTo].getParent.getName +
+  //         "\n"
+  //     );
+  //   }
   // }
 
   // public nodesToJSONObject(): NodeToJSON[] {

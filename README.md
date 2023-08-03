@@ -1,6 +1,10 @@
-<h1 align="center" style="font-family: 'Merriweather', sans-serif;"> AI Photo Editor </h1>
+<p align="center">
+<img alt="" src="https://raw.githubusercontent.com/COS301-SE-2023/AI-Photo-Editor/master/docs/pics/blix.svg" width="180px">
+<br />
+<i>(AKA. AI Photo Editor)</i>
+</p>
 
-[![codecov](https://codecov.io/gh/COS301-SE-2023/AI-Photo-Editor/branch/dev/graph/badge.svg?token=7T6WCYXEIO)](https://codecov.io/gh/COS301-SE-2023/AI-Photo-Editor)
+[![codecov](https://codecov.io/gh/COS301-SE-2023/AI-Photo-Editor/branch/master/graph/badge.svg?token=7T6WCYXEIO)](https://codecov.io/gh/COS301-SE-2023/AI-Photo-Editor)
 [![Build Codebase](https://github.com/COS301-SE-2023/AI-Photo-Editor/actions/workflows/build.yml/badge.svg)](https://github.com/COS301-SE-2023/AI-Photo-Editor/actions/workflows/build.yml)
 [![Lint Codebase](https://github.com/COS301-SE-2023/AI-Photo-Editor/actions/workflows/lint.yml/badge.svg)](https://github.com/COS301-SE-2023/AI-Photo-Editor/actions/workflows/lint.yml)
 [![Test Codebase](https://github.com/COS301-SE-2023/AI-Photo-Editor/actions/workflows/coverage.yml/badge.svg)](https://github.com/COS301-SE-2023/AI-Photo-Editor/actions/workflows/coverage.yml)
@@ -38,6 +42,29 @@
 
 <h3>Software Requirement Specification</h3>
 <a href="https://drive.google.com/file/d/1ATjzOak-0K-Q_kudSD9OEBIK9wS2q4Gy/view?usp=sharing">SRSv1</a>
+
+<a href="https://drive.google.com/file/d/1PUAM4CS4qMLwbHv37kl86bTaVbaIDlLZ/view?usp=sharing">SRSv2</a>
+
+<a href="https://drive.google.com/file/d/1XgHfZQaj9rpDhAZWE6s_zF1wM1EhKIRY/view?usp=sharing">SRSv3</a>
+
+
+
+<h3>Software Architecture</h3>
+<a href="https://drive.google.com/file/d/1vXylz_2AGhIbI3x6IT7RJHlcIxV7ydWe/view?usp=sharing">Software Architecture v1</a>
+
+<a href="https://drive.google.com/file/d/1ux78JlX2uZjZg3gL4HwTCUpflXp9-cwP/view?usp=sharing">Software Architecture v2</a>
+
+
+
+<h3>Extras</h3>
+<a href="https://drive.google.com/file/d/1KSBoSISRutLugk6KTDuSiBa4gBeDqJEq/view?usp=sharing">Coding Standards</a>
+
+
+<a href="https://drive.google.com/file/d/141GD2XQz7EbAA--MKQ5w9Yfh9zRA05ss/view?usp=sharing">User Manual v1</a>
+
+<a href="https://drive.google.com/file/d/1sLkLUSyI9LsDfnfzGExk_df6zPMu-HNL/view?usp=sharing">User Manual v2</a>
+
+<a href="https://drive.google.com/file/d/1bwBXHYIPah-2zh5x2d9cTLVaji_K4UI2/view?usp=sharing">Installation Manual v1</a>
 
 <h3>Contributions</h3>
 <a href="https://drive.google.com/file/d/1ewItSWd0Ag0mQbVnYTd4y8H6PclSpRNi/view?usp=sharing">Documentation Contributions</a>

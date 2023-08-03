@@ -132,10 +132,10 @@ describe("Test NodeUIBuilder", () => {
             defaultValue: 50,
             updatesBackend: true
       }     
-      nodeUIBuilder.addNumberInput(uiComponentConfig);
+      nodeUIBuilder.addNumberInput(uiComponentConfig,{set : "ayo"});
 
       expect(nodeUIBuilder["node"].params[0].label).toEqual("shrek");
-      expect(nodeUIBuilder["node"].params[0].params).toEqual([]);
+      expect(nodeUIBuilder["node"].params[0].params[0]).toEqual({set : "ayo"});
     });
 
     test("addImageInput should add a ", () => {
@@ -146,10 +146,10 @@ describe("Test NodeUIBuilder", () => {
             defaultValue: 50,
             updatesBackend: true
       }     
-      nodeUIBuilder.addImageInput(uiComponentConfig);
+      nodeUIBuilder.addImageInput(uiComponentConfig,{set : "ayo"});
 
       expect(nodeUIBuilder["node"].params[0].label).toEqual("shrek");
-      expect(nodeUIBuilder["node"].params[0].params).toEqual([]);
+      expect(nodeUIBuilder["node"].params[0].params[0]).toEqual({set : "ayo"});
     });
 
     test("addColorPicker should add a color picker", () => {
@@ -160,10 +160,10 @@ describe("Test NodeUIBuilder", () => {
             defaultValue: 50,
             updatesBackend: true
       }     
-      nodeUIBuilder.addColorPicker(uiComponentConfig,["rgb"]);
+      nodeUIBuilder.addColorPicker(uiComponentConfig,{set : "ayo"});
 
       expect(nodeUIBuilder["node"].params[0].label).toEqual("shrek");
-      expect(nodeUIBuilder["node"].params[0].params[0]).toEqual(["rgb"]);
+      expect(nodeUIBuilder["node"].params[0].params[0]).toEqual({set : "ayo"});
     });
 
     test("getUI should return the nodeUI", () => {
@@ -179,10 +179,10 @@ describe("Test NodeUIBuilder", () => {
             defaultValue: 50,
             updatesBackend: true
       }     
-      nodeUIBuilder.addLabel(uiComponentConfig,"GET OUT OF MA SWAMP!");
+      nodeUIBuilder.addLabel(uiComponentConfig,{shrek : "GET OUT OF MA SWAMP!"});
 
       expect(nodeUIBuilder['node'].params[0].label).toEqual("shrek");
-      expect(nodeUIBuilder['node'].params[0].params[0]).toEqual("GET OUT OF MA SWAMP!");
+      expect(nodeUIBuilder['node'].params[0].params[0]).toEqual({shrek : "GET OUT OF MA SWAMP!"});
     });
   });
 

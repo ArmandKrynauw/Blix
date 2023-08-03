@@ -2,6 +2,7 @@
   import { writable } from "svelte/store";
   import { UIValueStore } from "@shared/ui/UIGraph";
   import type { UIComponentConfig, UIComponentProps } from "@shared/ui/NodeUITypes";
+  import { RadioGroup } from "blix_svelvet";
 
   export let props: UIComponentProps;
   export let inputStore: UIValueStore;
@@ -18,9 +19,28 @@
   $: valStore = inputStore.inputs[config.componentId];
 </script>
 
+<!-- <Slider parameterStore="{valStore}"
+  min="{min}"
+  max="{max}"
+  step="{step}"
+  fixed="{1}"
+  bgColor="#1F1F28"
+  barColor="#f43e5c"
+  label="{config.label}"
+/> -->
+
+<RadioGroup parameterStore="{$valStore}">
+  {#each Object.keys(items) as itemKey}
+    <label>
+      <input type="radio" value="{items[itemKey]}" />
+      {itemKey}
+    </label>
+  {/each}
+</RadioGroup>
+
+<!-- 
 {#if Object.keys(items).length > 0}
   {#key inputStore.inputs[config.componentId]}
-    <!-- <select bind:value={inputStore.inputs["dropdown"]}> -->
     <select bind:value="{$valStore}">
       {#each Object.keys(items) as itemKey}
         <option value="{items[itemKey]}">{itemKey}</option>
@@ -28,7 +48,6 @@
     </select>
   {/key}
 {:else}
-  <!-- No items to display -->
   <select>
     <option selected disabled>-</option>
   </select>
@@ -41,4 +60,4 @@
     border: none;
     padding: 0.1em;
   }
-</style>
+</style> -->

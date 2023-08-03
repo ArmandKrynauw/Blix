@@ -40,6 +40,7 @@ jest.mock("electron", () => ({
 jest.mock("fs", () => ({
   readFileSync: jest.fn().mockReturnValue("mocked_base64_string"),
   readFile: jest.fn((filePath, callback) => callback(null, "mocked_file_data")),
+  readirSync: jest.fn(() => ["hello-plugin"]),
   existsSync: jest.fn(),
   mkdirSync: jest.fn(),
   writeFileSync: jest.fn(),

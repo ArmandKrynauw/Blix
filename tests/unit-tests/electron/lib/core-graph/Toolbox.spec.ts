@@ -87,11 +87,11 @@ describe("Test Node ui", () => {
   });
 
   test("nodeLeaf should be instantiated properly", () => {
-    const nod = new NodeUILeaf(node,NodeUIComponent.Button,"leaf",[10]);
+    const nod = new NodeUILeaf(node,NodeUIComponent.Button,"leaf",[{exec : 10}]);
 
     expect(nod.label).toEqual("leaf");
     expect(nod.parent).toEqual(node);
-    expect(nod.params).toEqual([10]);
+    expect(nod.params).toEqual([{exec : 10}]);
     expect(nod.type).toEqual("leaf");
     expect(nod.category).toEqual("Button");
   });
@@ -123,9 +123,7 @@ describe("Test Node ui", () => {
     expect(builder["node"].params[0].label).toEqual("Slider");
     expect(builder["node"].params[0].parent).toEqual(builder["node"]);
     expect(builder["node"].params[0].type).toEqual("leaf");
-    expect(builder["node"].params[0].params[0]).toEqual(0);
-    expect(builder["node"].params[0].params[1]).toEqual(100);
-    expect(builder["node"].params[0].params[2]).toEqual(0.1);
+    expect(builder["node"].params[0].params[0]).toEqual({ min: 0, max: 100, step: 0.1 });
   });
 
   test("nodeParent should add Dropdown", () => {
@@ -141,12 +139,12 @@ describe("Test Node ui", () => {
         }
    
 
-    builder.addDropdown(uiComponentConfig, builder2);
+    builder.addDropdown(uiComponentConfig,{label: "A", value: 1});
       
     expect(builder["node"].params[0].label).toEqual("Dropdown");
     expect(builder["node"].params[0].parent).toEqual(builder["node"]);
     expect(builder["node"].params[0].type).toEqual("leaf");
-    expect(builder["node"].params[0].params[0]["node"]).toBeDefined();
+    expect(JSON.stringify(builder["node"].params[0].params[0])).toBe(JSON.stringify({label: "A", value: 1}));
   });
 
   test("nodeParent should add Label", () => {
@@ -157,12 +155,12 @@ describe("Test Node ui", () => {
         updatesBackend: true
       }
 
-    builder.addLabel(uiComponentConfig,"Attack the D point!");
+    builder.addLabel(uiComponentConfig,{type : "Attack the D point!"});
       
     expect(builder["node"].params[0].label).toEqual("Label");
     expect(builder["node"].params[0].parent).toEqual(builder["node"]);
     expect(builder["node"].params[0].type).toEqual("leaf");
-    expect(builder["node"].params[0].params[0]).toEqual("Attack the D point!");
+    expect(builder["node"].params[0].params[0]).toEqual({ type : "Attack the D point!"});
   });
 
   test("nodeParent should add numberInput", () => {
@@ -173,11 +171,12 @@ describe("Test Node ui", () => {
         updatesBackend: true
       }
 
-    builder.addNumberInput(uiComponentConfig);
+    builder.addNumberInput(uiComponentConfig,{min : 0, max : 100, step : 0.1});
       
     expect(builder["node"].params[0].label).toEqual("InputNum");
     expect(builder["node"].params[0].parent).toEqual(builder["node"]);
     expect(builder["node"].params[0].type).toEqual("leaf");
+    expect(builder["node"].params[0].params[0]).toBeDefined();
   });
 
   test("nodeParent should add imageInput", () => {
@@ -188,8 +187,8 @@ describe("Test Node ui", () => {
         updatesBackend: true
       }
 
-    builder.addImageInput(uiComponentConfig);
-      
+    builder.addImageInput(uiComponentConfig,{type : "Attack the D point!"});
+
     expect(builder["node"].params[0].label).toEqual("InputImg");
     expect(builder["node"].params[0].parent).toEqual(builder["node"]);
     expect(builder["node"].params[0].type).toEqual("leaf");
@@ -204,12 +203,12 @@ describe("Test Node ui", () => {
         updatesBackend: true
       }
 
-    builder.addColorPicker(uiComponentConfig,1);
+    builder.addColorPicker(uiComponentConfig,{type : "Attack the D point!"});
       
     expect(builder["node"].params[0].label).toEqual("ColorPicker");
     expect(builder["node"].params[0].parent).toEqual(builder["node"]);
     expect(builder["node"].params[0].type).toEqual("leaf");
-    expect(builder["node"].params[0].params[0]).toEqual(1);
+    expect(builder["node"].params[0].params[0]).toEqual({type : "Attack the D point!"});
   });
 
 });

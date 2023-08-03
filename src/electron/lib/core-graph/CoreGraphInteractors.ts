@@ -1,3 +1,4 @@
+import { type GraphMetadata } from "../../../shared/ui/UIGraph";
 import { type IGraphUIInputs, type INodeUIInputs } from "../../../shared/types";
 import { GraphEdge, GraphNode, NodeStylingStore, UIGraph } from "../../../shared/ui/UIGraph";
 import { type UUID } from "../../../shared/utils/UniqueEntity";
@@ -6,6 +7,7 @@ import { CoreGraph, NodesAndEdgesGraph } from "./CoreGraph";
 export enum CoreGraphUpdateEvent {
   graphUpdated, // When nodes / edges change
   uiInputsUpdated, // When UI inputs are changed
+  metadataUpdated,
 }
 
 // These correspond to parties that can update the CoreGraph
@@ -95,6 +97,7 @@ export class UIInputsGraphSubscriber extends CoreGraphSubscriber<IGraphUIInputs>
 export class IPCGraphSubscriber extends CoreGraphSubscriber<UIGraph> {
   onGraphChanged(graphId: UUID, graphData: CoreGraph): void {
     const uiGraph: UIGraph = new UIGraph(graphId);
+    uiGraph.metadata = graphData.getMetadata;
     const nodesAndEdges: NodesAndEdgesGraph = graphData.exportNodesAndEdges();
 
     for (const node in nodesAndEdges.nodes) {
@@ -149,5 +152,10 @@ export class IPCGraphSubscriber extends CoreGraphSubscriber<UIGraph> {
 export class SystemGraphSubscriber extends CoreGraphSubscriber<CoreGraph> {
   onGraphChanged(graphId: UUID, graphData: CoreGraph): void {
     if (this._notifyee) this._notifyee(graphId, graphData);
+  }
+}
+export class MetadataGraphSubscriber extends CoreGraphSubscriber<GraphMetadata> {
+  onGraphChanged(graphId: string, graphData: CoreGraph): void {
+    if (this._notifyee) this._notifyee(graphId, graphData.getMetadata);
   }
 }

@@ -10,9 +10,14 @@ import { Blix } from "./electron/lib/Blix";
 import { CoreGraphInterpreter } from "./electron/lib/core-graph/CoreGraphInterpreter";
 import { exposeMainApis } from "./electron/lib/api/MainApi";
 import { MainWindow, bindMainWindowApis } from "./electron/lib/api/apis/WindowApi";
+import { platform } from "os";
 
-//const isProd = process.env.NODE_ENV === "production" || app.isPackaged;
-const isProd = true;
+const isProd = process.env.NODE_ENV === "production" || app.isPackaged;
+// const isProd = true;
+
+if (app.isPackaged) {
+  process.env.NODE_ENV = "production";
+}
 
 logger.info("App starting...");
 settings.set("check", true);
@@ -95,9 +100,19 @@ async function createMainWindow() {
 
   const url =
     // process.env.NODE_ENV === "production"
+    // isProd
+    //   ? // in production, use the statically build version of our application
+    //     `file://${join(__dirname, "..", "public", "index.html")}`
+    //   : // in dev, target the host and port of the local rollup web server
+    //     "http://localhost:5500";
     isProd
       ? // in production, use the statically build version of our application
-        `file://${join(__dirname, "..", "public", "index.html")}`
+        `file://${join(
+          __dirname,
+          // `${platform().toString() === "darwin" ? "../" : ""}public`,V
+          "public",
+          "index.html"
+        )}`
       : // in dev, target the host and port of the local rollup web server
         "http://localhost:5500";
 

@@ -1,29 +1,24 @@
 <!-- This pane is for showing media content large-scale -->
 <script lang="ts">
-  import Image from "../../ui/utils/Image.svelte";
-  import TextBox from "../../ui/utils/TextBox.svelte";
+  import Image from "../utils/mediaDisplays/Image.svelte";
+  import TextBox from "../utils/mediaDisplays/TextBox.svelte";
   import { mediaStore } from "../../lib/stores/MediaStore";
-  import type { GraphNode, GraphNodeUUID, GraphUUID } from "@shared/ui/UIGraph";
-  import { graphMall } from "../../lib/stores/GraphStore";
-  import { get, writable, type Readable } from "svelte/store";
+  import type { GraphNodeUUID, GraphUUID } from "@shared/ui/UIGraph";
+  import { writable, type Readable } from "svelte/store";
   import type { MediaOutput } from "@shared/types/media";
   import { onDestroy } from "svelte";
+  import ColorDisplay from "../utils/mediaDisplays/ColorDisplay.svelte";
+  import SelectionBox from "../utils/graph/SelectionBox.svelte";
+  import { type SelectionBoxItem } from "../../types/selection-box";
 
-  const graphUUIDs = graphMall.getAllGraphUUIDsReactive();
+  const mediaOutputIds = mediaStore.getMediaOutputIdsReactive();
 
-  $: outputNodesByGraphUUID = getAllOutputNodesByGraphUUID($graphUUIDs);
-  type NodesByUUID = Readable<{ [key: GraphNodeUUID]: GraphNode }>;
+  let selectedItems: SelectionBoxItem[] = [];
 
-  function getAllOutputNodesByGraphUUID(graphUUIDs: GraphUUID[]): {
-    [key: GraphUUID]: NodesByUUID;
-  } {
-    let res: { [key: GraphUUID]: NodesByUUID } = {};
-
-    for (let uuid of graphUUIDs) {
-      res[uuid] = graphMall.getGraph(uuid)?.getOutputNodesByIdReactive();
-    }
-
-    return res;
+  $: if ($mediaOutputIds) {
+    selectedItems = Array.from($mediaOutputIds)
+      .sort()
+      .map((id) => ({ id, title: id }));
   }
 
   let mediaId = writable("default");
@@ -53,13 +48,19 @@
     unsubMedia();
   });
 
-  function handleSelect(e: Event) {
-    return;
-    const value = (e.target as HTMLSelectElement).value;
-    if (!value) return;
+  // function handleSelect(e: Event) {
+  //   return;
+  //   const value = (e.target as HTMLSelectElement).value;
+  //   if (!value) return;
 
-    const [graphUUID, nodeUUID] = value.split("/");
-    selectedNode = { graphUUID, outNode: nodeUUID };
+  //   const [graphUUID, nodeUUID] = value.split("/");
+  //   selectedNode = { graphUUID, outNode: nodeUUID };
+  // }
+
+  async function exportMedia(e: Event) {
+    if ($media?.dataType && $media?.content) {
+      await mediaStore.exportMedia($media);
+    }
   }
 
   type MediaDisplay = {
@@ -79,12 +80,25 @@
       component: TextBox,
       props: (data: number) => ({
         content: data?.toString() || "NULL",
-        status: !!data ? "normal" : "warning",
+        status: data == null ? "warning" : "normal",
+        fontSize: "large",
+      }),
+    },
+    boolean: {
+      component: TextBox,
+      props: (data: number) => ({
+        content: data?.toString() || "NULL",
+        status: data == null ? "warning" : "normal",
+        fontSize: "large",
       }),
     },
     string: {
       component: TextBox,
       props: (data: string) => ({ content: data }),
+    },
+    color: {
+      component: ColorDisplay,
+      props: (data: string) => ({ color: data }),
     },
     Error: {
       component: TextBox,
@@ -94,35 +108,55 @@
 </script>
 
 <div class="fullPane">
-  <div class="hover">
-    <input type="text" bind:value="{$mediaId}" />
-    <select on:change="{handleSelect}">
-      <option selected disabled value> --- </option>
-      {#each Object.keys(outputNodesByGraphUUID) as graphUUID}
-        {@const outputNodes = get(outputNodesByGraphUUID[graphUUID])}
-        <option value="{graphUUID}" disabled>
-          --- {graphUUID.slice(0, 6)} ---
-        </option>
-
-        {#each Object.keys(outputNodes) as outputId}
-          {@const output = outputNodes[outputId]}
-          <option value="{graphUUID}/{output.uuid}">
-            {output.uuid.slice(0, 6)}
-          </option>
+  <div class="hover flex items-center space-x-2">
+    <!-- <input type="text" bind:value="{$mediaId}" class="h-7 bg-zinc-800/80 border border-zinc-600 caret-rose-500 outline-none p-2 rounded-md text-zinc-400" /> -->
+    <!-- <select bind:value="{$mediaId}">
+      {#if $mediaOutputIds}
+        {#each Array.from($mediaOutputIds) as id}
+          <option value="{id}">{id}</option>
         {/each}
-      {/each}
-    </select>
+      {:else}
+        <option selected disabled value>No Outputs</option>
+      {/if}
+    </select> -->
+    <div class="self-end">
+      <SelectionBox
+        items="{selectedItems}"
+        bind:selectedItemId="{$mediaId}"
+        missingContentLabel="No Outputs"
+      />
+    </div>
+    <div
+      on:click="{exportMedia}"
+      on:keydown="{null}"
+      class="flex h-7 select-none items-center justify-center rounded-md border border-zinc-600 bg-zinc-800/80 p-2 text-zinc-400 hover:bg-zinc-700 active:bg-zinc-800/50"
+    >
+      Export
+    </div>
+    <!-- <div class="self-end">
+      <SelectionBox
+        items="{selectedItems}"
+        selectedItemId="{selectedItems[0]?.id}"
+        missingContentLabel="No Outputs"
+      />
+    </div> -->
   </div>
 
   <div class="media">
     {#if $media}
-      <svelte:component
-        this="{dataTypeToMediaDisplay[$media.dataType].component}"
-        {...dataTypeToMediaDisplay[$media.dataType].props($media.content)}
-      />
+      {@const display = dataTypeToMediaDisplay[$media.dataType]}
+      {#if display}
+        <svelte:component this="{display.component}" {...display.props($media.content)} />
+      {:else}
+        {@const errorDisplay = dataTypeToMediaDisplay["Error"]}
+        <svelte:component
+          this="{errorDisplay.component}"
+          {...errorDisplay.props(`ERROR: Unknown data type: ${JSON.stringify($media)}`)}
+        />
+      {/if}
       <!-- <Image src="https://media.tenor.com/1wZ88hrB5SwAAAAd/subway-surfer.gif" /> -->
     {:else}
-      <div class="placeholder">NULL</div>
+      <div class="placeholder">NO CONTENT</div>
     {/if}
     <!-- <button on:click="{compute}">Testing</button> -->
   </div>
@@ -137,7 +171,11 @@
   }
 
   .media {
-    width: calc(100%-2em);
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+    width: 100%;
     margin: auto;
     height: auto;
     text-align: center;
@@ -148,6 +186,7 @@
     bottom: 1em;
     left: 1em;
     color: black;
+    z-index: 100;
   }
 
   .placeholder {

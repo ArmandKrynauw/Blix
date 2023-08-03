@@ -137,7 +137,7 @@
         if (toRem >= 0 && toRem < layout.panels.length) {
           layout.getPanel(toRem).size = -1;
 
-          // layout.removePanel(toRem);
+          layout.removePanel(toRem);
           // layout = layout;
 
           bubbleToRoot();
@@ -163,13 +163,6 @@
       default:
         return;
     }
-  }
-
-  function triggerWindowResize() {
-    // For now this is necessary to force Svelvet
-    // to update the positions of objects on it's canvas
-    // TODO: Hopefully find a more elegant solution
-    window.dispatchEvent(new Event("resize"));
   }
 
   // This dict defines mappings from PanelType to the corresponding Svelte component to render
@@ -200,9 +193,7 @@
     style="{height == '' ? '' : 'height: {height}'}"
     dblClickSplitter="{false}"
     on:pane-remove="{(e) => e.stopPropagation()}"
-    on:resize="{triggerWindowResize}"
   >
-    <!-- {layout.id} -->
     {#each layout.panels as panel, i (panel.id)}
       <!-- TODO: Fix; look into using svelte animations -->
       {#key layout}
